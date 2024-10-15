@@ -1,0 +1,19 @@
+[Unit]
+Description=Node.js Strategy Trading E7O7 App
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node /home/$USER/Project/strategy-trading/main.js
+Restart=always
+RestartSec=5
+User=$USER
+EnvironmentFile=/home/$USER/Project/strategy-trading/env/.env.production
+Environment=ENTRY_RECIPE=7
+Environment=OUTRY_RECIPE=7
+Environment=PORT=3379
+RABBITMQ_URL=amqp://localhost
+WorkingDirectory=/home/$USER/Project/strategy-trading
+
+[Install]
+WantedBy=multi-user.target
+

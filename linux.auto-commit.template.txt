@@ -1,0 +1,15 @@
+[Unit]
+Description=Auto Commit Git Changes
+After=network.target
+
+[Service]
+ExecStart=/home/$USER/Project/strategy-trading/auto-commit.sh
+Restart=always
+RestartSec=5
+User=$USER
+WorkingDirectory=/home/$USER/Project/strategy-trading
+Environment=GIT_SSH_COMMAND="/usr/bin/ssh -i /home/$USER/.ssh/id_rsa -o IdentitiesOnly=yes"
+
+[Install]
+WantedBy=multi-user.target
+

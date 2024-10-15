@@ -1,0 +1,28 @@
+{
+  "name": "binance",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "npm run production.full",
+    "test": "cd backend && npm run test",
+    "uat": "cd backend && npm run uat",
+    "analyst.market": "cd backend && npm run analyst.market",
+    "analyst.history": "cd backend && npm run analyst.history",
+    "staging.trigger": "cd backend && npm run analyst.trigger",
+    "staging.debug": "cd backend && npm run staging.debug",
+    "staging.service": "cd backend && npm run staging.service",
+    "staging.api": "cd backend && npm run staging.api",
+    "staging.gui": "cd gui &&  npm run start",
+    "staging.full": "concurrently \"npm run staging.api\" \"npm run staging.gui\"",
+    "production.trigger": "cd backend && npm run production.trigger",
+    "production.debug": "cd backend && npm run production.debug",
+    "production.service": "cd backend && npm run production.service",
+    "production.api": "cd backend && npm run production.api",
+    "production.gui": "cd gui &&  npm run start",
+    "production.full": "concurrently \"npm run production.api\" \"npm run production.gui\""
+  },
+  "keywords": [],
+  "author": "vulee1202",
+  "license": "ISC"
+}

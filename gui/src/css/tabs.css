@@ -1,0 +1,35 @@
+.json-wrap {
+    white-space: pre-wrap; /* Allows text to wrap */
+    word-wrap: break-word; /* Breaks long words */
+    overflow-wrap: break-word; /* Ensures long words break */
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ccc; /* Add a bottom border for the tab effect */
+}
+
+.tab-button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px 5px 0 0; /* Rounded top corners */
+    background-color: #4caf50; /* Green background for tabs */
+    color: white;
+    transition: background-color 0.3s, transform 0.2s;
+    border-bottom: 2px solid transparent; /* Transparent border for active tab effect */
+}
+
+.tab-button:hover {
+    background-color: #21a1f1;
+    transform: scale(1.05);
+}
+
+.tab-button.active {
+    background-color: #21a1f1;
+    font-weight: bold;
+    border-bottom: 2px solid #61dafb; /* Highlight active tab */
+}

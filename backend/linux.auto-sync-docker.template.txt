@@ -1,0 +1,14 @@
+[Unit]
+Description=Auto Sync Files from Docker
+After=network.target
+
+[Service]
+ExecStart=/home/$USER/Project/strategy-trading/auto-syncs.docker.sh
+Restart=always
+RestartSec=5
+User=$USER
+WorkingDirectory=/home/$USER/Project/strategy-trading
+
+[Install]
+WantedBy=multi-user.target
+

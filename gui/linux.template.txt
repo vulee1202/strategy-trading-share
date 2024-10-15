@@ -1,0 +1,13 @@
+[Unit]
+Description=React Trading Staging App
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/serve -s /home/$USER/Project/strategy-trading/gui/build -l 3333
+Restart=always
+RestartSec=5
+User=$USER
+WorkingDirectory=/home/$USER/Project/strategy-trading/gui
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,140 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker Compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+# Here the instructions define your application as a service called "server".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+services:
+  rabbitmq:
+    image: rabbitmq:management   # Use RabbitMQ image with management plugin
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: myuser
+      RABBITMQ_DEFAULT_PASS: mystrongpassword
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_config:/etc/rabbitmq
+    ports:
+      - "5672:5672"  # RabbitMQ message broker port
+      - "15672:15672"  # Management UI port
+    networks:
+      - my-network
+    command: ["rabbitmq-server", "/etc/rabbitmq/rabbitmq.conf"]
+
+  redis:
+    image: redis:latest
+    container_name: redis  # Name of the Redis container
+    ports:
+      - "6379:6379"  # Expose port 6379 for Redis
+    # environment:
+    #   REDIS_DEFAULT_PASSWORD: mystrongpassword
+    volumes:
+      - redis_data:/data  # Mount a volume for data persistence
+      - ./redis.conf:/etc/redis/redis.conf
+    networks:
+      - my-network
+    command: ["redis-server", "/etc/redis/redis.conf"]
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    user: root   # Run the app as root user, since that worked for you
+    volumes:
+      - nginx:/gui/build:/usr/share/nginx/html
+    depends_on:
+      - gui
+    ports:
+      - "9393:80"
+
+  server-1:
+    build:
+      context: ./backend
+    container_name: app_server
+    user: root   # Run the app as root user, since that worked for you
+    environment:
+      NODE_ENV: staging
+      RABBITMQ_URL: amqp://myuser:mystrongpassword@rabbitmq:5672
+      REDIS_URL: redis://@redis:6379
+      # REDIS_URL: redis://:mystrongpassword@redis:6379
+    volumes:
+      - app_server:/src:/usr/src/app/src  # Mount src
+    depends_on:
+      - rabbitmq  
+      - redis 
+    ports:
+      - "3377:3000" 
+    networks:
+      - my-network
+
+  # React GUI service
+  gui:
+    build:
+      context: ./gui
+      dockerfile: Dockerfile
+    container_name: gui
+    user: root 
+    environment:
+      REACT_APP_API_URLS: http://localhost:3377/sse
+    volumes:
+      - app_gui:/gui:/app  # Mount the entire project into the container
+      - app_gui_node_modules:/app/node_modules  # Ignore node_modules to avoid conflicts
+      - app_gui_nginx:/gui/src:/usr/share/nginx/html
+    depends_on:
+      - server-1  # Ensure back end starts before the app
+    ports:
+      - "8080:80"  # Map host port 8080 to container port 80
+    networks:
+      - my-network
+
+# Use another networks if needed
+networks:
+  my-network:
+    driver: bridge
+
+volumes:
+  rabbitmq_data:
+  rabbitmq_config:
+  redis_data:
+  redis_config:
+  nginx:
+  app_server:
+  app_gui:
+  app_gui_node_modules:
+  app_gui_nginx:
+
+# The commented out section below is an example of how to define a PostgreSQL
+# database that your application can use. `depends_on` tells Docker Compose to
+# start the database before your application. The `db-data` volume persists the
+# database data between container restarts. The `db-password` secret is used
+# to set the database password. You must create `db/password.txt` and add
+# a password of your choosing to it before running `docker-compose up`.
+#     depends_on:
+#       db:
+#         condition: service_healthy
+#   db:
+#     image: postgres
+#     restart: always
+#     user: postgres
+#     secrets:
+#       - db-password
+#     volumes:
+#       - db-data:/var/lib/postgresql/data
+#     environment:
+#       - POSTGRES_DB=example
+#       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+#     expose:
+#       - 5432
+#     healthcheck:
+#       test: [ "CMD", "pg_isready" ]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+# volumes:
+#   db-data:
+# secrets:
+#   db-password:
+#     file: db/password.txt
+

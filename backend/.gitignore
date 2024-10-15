@@ -1,0 +1,6 @@
+node_modules/
+database/TEST/
+daemon
+logs/info.log
+logs/warn.log
+app.log
